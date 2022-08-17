@@ -13,6 +13,7 @@ namespace Valve.VR.InteractionSystem
 	//-------------------------------------------------------------------------
 	public class Teleport : MonoBehaviour
     {
+		[SerializeField] bool showTutorial;
         public SteamVR_Action_Boolean teleportAction = SteamVR_Input.GetAction<SteamVR_Action_Boolean>("Teleport");
 
         public LayerMask traceLayerMask;
@@ -137,12 +138,15 @@ namespace Valve.VR.InteractionSystem
 				return _instance;
 			}
 		}
+		GameObject scoreArea;
 
 
 		//-------------------------------------------------
 		void Awake()
         {
-            _instance = this;
+			 scoreArea = GameObject.Find("ScoreArea");
+
+			_instance = this;
 
 			chaperoneInfoInitializedAction = ChaperoneInfo.InitializedAction( OnChaperoneInfoInitialized );
 
@@ -188,7 +192,7 @@ namespace Valve.VR.InteractionSystem
 
 			CheckForSpawnPoint();
 
-			Invoke( "ShowTeleportHint", 5.0f );
+			if(showTutorial) Invoke( "ShowTeleportHint", 5.0f );
 		}
 
 
@@ -867,6 +871,7 @@ namespace Valve.VR.InteractionSystem
 
 			if ( teleportPoint != null )
 			{
+				scoreArea.SendMessage("ChangeScore" , 2);
 				teleportPosition = teleportPoint.transform.position;
 
 				//Teleport to a new scene
@@ -881,6 +886,7 @@ namespace Valve.VR.InteractionSystem
 			TeleportArea teleportArea = teleportingToMarker as TeleportArea;
 			if ( teleportArea != null )
 			{
+				scoreArea.SendMessage("ChangeScore" , 3);
 				if ( floorFixupMaximumTraceDistance > 0.0f )
 				{
 					RaycastHit raycastHit;
